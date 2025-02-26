@@ -9,9 +9,6 @@ Deactivate
 ## Install the deps
 pip install -r requirements.txt
 
-# project -> https://www.youtube.com/watch?v=MoqgmWV1fm8
-# pip install jupyterlab ? for interacive interface in ide
-
 ## How to launch JupyterLab with:
 jupyter lab
 
