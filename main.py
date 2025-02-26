@@ -1,0 +1,78 @@
+import streamlit as st
+import time
+import pickle
+from langchain_community.document_loaders import WebBaseLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.vectorstores import FAISS
+from langchain_community.llms import OpenAI
+
+
+from embedding import getEmbeddingModel
+from helper import display_vector_store
+from chat import handleChat
+from config import faiss_file_path
+
+from dotenv import load_dotenv
+load_dotenv()  # export enviroment variables from .envv file
+
+st.title("Stock research Bot")
+st.sidebar.title("Stock article")
+
+articles_list = []
+for k in range(3):
+    article = st.sidebar.text_input(f"Article {k+1}")
+    articles_list.append(article)
+
+main_placeholder = st.empty()
+process_artcle_clicked = st.sidebar.button("Process Articles")
+user_input = None
+if process_artcle_clicked:
+    main_placeholder.text("Web Documment Loading...Started...✅✅✅")
+    print('Articles are being processed...')
+    # loader = UnstructuredURLLoader(urls=articles_list)
+    # Load the web document
+    print("Loading the web documents")
+    loader = WebBaseLoader(articles_list)
+    data = loader.load()
+    #print(data[0].page_content[:500])
+
+    main_placeholder.text("Documment Splitting in chunks...Started...✅✅✅")
+    # Create a text splitter instance    
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size = 1000,
+        chunk_overlap = 100
+    )
+    # Split long documents into smaller chunks
+    print('Splitting the web doc data into chunks')
+    chunks = text_splitter.split_documents(data)
+    print("total chunks: ", len(chunks))   
+    chunks = chunks[:4]
+  
+    print("chunk_list: ", chunks[1])   
+    embedding_model = getEmbeddingModel()
+
+    # display_vector_store(chunks, embedding_model);  
+       
+    # --------Tasks: Embedding, FAISS index creation--------
+    # 1. Internally, below uses the embedding_model to generate the embeddings for the text in each Document object or chunk
+    # 2. Then it takes these newly created embeddings and stores them in a FAISS index. The FAISS index is a data structure optimized for fast similarity search.
+    # 3. Returns a FAISS index
+    # 4. Save to local file
+    try:
+        main_placeholder.text("Embedding...Started...✅✅✅")
+        faiss_vector_index = FAISS.from_documents(chunks, embedding_model)        
+        time.sleep(2)
+        # # -----Store locally to see-----
+        # Save the FAISS index to a pickle file
+        with open(faiss_file_path, "wb") as f:
+            pickle.dump(faiss_vector_index, f)
+        # print(f"FAISS index is saved in: {file_path}")
+        main_placeholder.text("Articles are processed...Now ask question...✅✅✅")         
+       
+    except Exception as e:
+        print(f"Error saving FAISS index: {e}")
+        chunk_embeddings = None
+
+user_input = st.chat_input("Type your Question:")  
+if user_input:
+        handleChat(user_input) 

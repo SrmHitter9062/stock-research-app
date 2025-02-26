@@ -1,0 +1,1 @@
+faiss_file_path = "faiss/faiss_vector.pkl"
