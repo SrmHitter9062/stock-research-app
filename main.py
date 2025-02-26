@@ -1,6 +1,7 @@
 import streamlit as st
 import time
 import pickle
+import os
 from langchain_community.document_loaders import WebBaseLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
@@ -46,9 +47,9 @@ if process_artcle_clicked:
     print('Splitting the web doc data into chunks')
     chunks = text_splitter.split_documents(data)
     print("total chunks: ", len(chunks))   
-    chunks = chunks[:4]
+    chunks = chunks[:6]
   
-    print("chunk_list: ", chunks[1])   
+    print("chunk_list: ", chunks[0])   
     embedding_model = getEmbeddingModel()
 
     # display_vector_store(chunks, embedding_model);  
@@ -62,11 +63,9 @@ if process_artcle_clicked:
         main_placeholder.text("Embedding...Started...✅✅✅")
         faiss_vector_index = FAISS.from_documents(chunks, embedding_model)        
         time.sleep(2)
-        # # -----Store locally to see-----
-        # Save the FAISS index to a pickle file
-        with open(faiss_file_path, "wb") as f:
-            pickle.dump(faiss_vector_index, f)
-        # print(f"FAISS index is saved in: {file_path}")
+    
+        #------ Save the FAISS index-----
+        faiss_vector_index.save_local(faiss_file_path)        
         main_placeholder.text("Articles are processed...Now ask question...✅✅✅")         
        
     except Exception as e:
@@ -75,4 +74,4 @@ if process_artcle_clicked:
 
 user_input = st.chat_input("Type your Question:")  
 if user_input:
-        handleChat(user_input) 
+    handleChat(user_input) 

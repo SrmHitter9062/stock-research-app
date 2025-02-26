@@ -4,6 +4,8 @@ from langchain.chat_models import ChatOpenAI
 from langchain_community.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 
+from embedding import getEmbeddingModel
+
 from config import faiss_file_path
 import os, pickle
 from dotenv import load_dotenv
@@ -22,31 +24,34 @@ def initializeChat():
     # for message in st.sesss
 
 def handleChat(user_input):
+    embedding_model = getEmbeddingModel()
     #  with st.spinner("Application is readying response..."):
-    if os.path.exists(faiss_file_path):
-         with open(faiss_file_path, 'rb') as file:
-            try:
-                # -----Use RAG technique---
-                # Load FAISS index having vector stores
-                vector_stores = pickle.load(file)
-                # Set up retriever (searches for similar documents)
-                retriever = vector_stores.as_retriever(search_kwargs={"k": 2})
-                print(f"retriever: {retriever}")
-                # Set up RAG Chain (Retriever + LLM)
-                qa_chain = RetrievalQA.from_chain_type(
-                    llm=llm, 
-                    retriever=retriever,
-                    return_source_documents=True
-                    )
-                print(f"qa_chain: {qa_chain}")
-                response = qa_chain.invoke(user_input)
-                print(f"response: {response}")
-                displayResult(response)
+    try:
+        if os.path.exists(faiss_file_path):
+            faiss_vector_index = FAISS.load_local(faiss_file_path, 
+                                                  embeddings=embedding_model,
+                                                  allow_dangerous_deserialization=True)
+            # -----Use RAG technique---
+            # Load FAISS index having vector stores
+            # vector_stores = pickle.load(file)
+            # Set up retriever (searches for similar documents)
+            retriever = faiss_vector_index.as_retriever(search_kwargs={"k": 2})
+            print(f"retriever: {retriever}")
+            # Set up RAG Chain (Retriever + LLM)
+            qa_chain = RetrievalQA.from_chain_type(
+                llm=llm, 
+                retriever=retriever,
+                return_source_documents=True
+                )
+            print(f"qa_chain: {qa_chain}")
+            response = qa_chain.invoke(user_input)
+            # print(f"response: {response}")
+            displayResult(response)
                 
-            except Exception as e:
-                print(f"Exception occured: {e}")
-                st.header("Answer")
-                st.write("Sorry !! Could not find answer")
+    except Exception as e:
+        print(f"Exception occured: {e}")
+        st.header("Answer")
+        st.write("Sorry !! Could not find answer")
 
 
 def displayResult(response):
