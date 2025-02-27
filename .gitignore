@@ -1,4 +1,6 @@
 .env
 .myvenv
 .DS_Store
-__pychache__
+test.ipynbtest.ipynb
+.ipynb_checkpoints
+__pycache__

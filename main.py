@@ -12,6 +12,7 @@ from embedding import getEmbeddingModel
 from helper import display_vector_store
 from chat import handleChat
 from config import faiss_file_path
+from helper import sendUIResponse
 
 from dotenv import load_dotenv
 load_dotenv()  # export enviroment variables from .envv file
@@ -56,9 +57,7 @@ if process_artcle_clicked:
        
     # --------Tasks: Embedding, FAISS index creation--------
     # 1. Internally, below uses the embedding_model to generate the embeddings for the text in each Document object or chunk
-    # 2. Then it takes these newly created embeddings and stores them in a FAISS index. The FAISS index is a data structure optimized for fast similarity search.
-    # 3. Returns a FAISS index
-    # 4. Save to local file
+    # 2. Then it takes these newly created embeddings and stores them in a FAISS index. The FAISS index is a data structure optimized for fast similarity search.    
     try:
         main_placeholder.text("Embedding...Started...✅✅✅")
         faiss_vector_index = FAISS.from_documents(chunks, embedding_model)        
@@ -70,8 +69,10 @@ if process_artcle_clicked:
        
     except Exception as e:
         print(f"Error saving FAISS index: {e}")
-        chunk_embeddings = None
 
 user_input = st.chat_input("Type your Question:")  
 if user_input:
-    handleChat(user_input) 
+    with st.spinner("Stock research Boot is readying response..."):
+        resp = handleChat(user_input) 
+    # print(f"response: {resp}")
+    sendUIResponse(resp)
