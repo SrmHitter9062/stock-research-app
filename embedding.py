@@ -1,8 +1,16 @@
 # from langchain_openai import OpenAIEmbeddings # paid
-# from langchain.embeddings import HuggingFaceEmbeddings # Using for free embedding 
+# from langchain.embeddings import HuggingFaceEmbeddings # Using Hugging Face free embedding 
 from langchain_huggingface import HuggingFaceEmbeddings
 
 def getEmbeddingModel():
+    """
+    Initialize the Hugging Face sentence-transformers/all-MiniLM-L6-v2 embedding model
+    
+    Returns
+    -------
+    embedding_model : HuggingFaceEmbeddings
+        The Hugging Face sentence-transformers/all-MiniLM-L6-v2 embedding model
+    """
     # Initialize hugging face embeddings instance
     # embedding_model = OpenAIEmbeddings(model="text-embedding-3-small")
     model_name = "sentence-transformers/all-MiniLM-L6-v2" 

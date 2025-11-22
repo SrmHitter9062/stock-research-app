@@ -1,3 +1,9 @@
+### Stock Research App
+This project develops a stock research application that enables users to analyze and gain insights from stock-related articles.This innovative approach facilitates informed decision-making in the stock market, efficiently rather than going each article and read, analyze and then come to conclusion.
+
+in short: Streamlit app for an AI Stock Researcher that processes stock articles and answers questions using RAG (Retrieval-Augmented Generation).
+
+#### Create venv:
 Create venv:
 >   python3 -m venv .myvenv
 
@@ -7,67 +13,64 @@ Enter in venv (inside project directory)
 Deactivate
 >    deactivate
 
-### Install the deps
+#### Install the deps
 > pip install -r requirements.txt
 
-### Run the streamlit app
+#### Run the streamlit app
 > streamlit run main.py
 
 
 
-### Test Articles about Tata motors stock
-1. https://www.livemint.com/market/live-blog/tata-motors-share-price-today-latest-live-updates-on-21-feb-2025-11740105011362.html
-2. https://www.moneycontrol.com/news/business/markets/tata-motors-m-m-hyundai-motor-india-fall-up-to-6-on-reports-of-govt-easing-ev-import-rules-12947075.html
-3. https://www.businesstoday.in/markets/company-stock/story/tata-motors-stock-slips-from-52-week-high-is-it-a-value-buy-465282-2025-02-20
+### Test stock articles about Tata motors stock
+1. https://www.moneycontrol.com/markets/financials/quarterly-results/tatamotorspassengervehicles-tm03/
+2. https://groww.in/stocks/tata-motors-ltd/company-financial
+3. https://www.indmoney.com/blog/stocks/tata-motors-q4-results
+
+[play](https://drive.google.com/file/d/1wjTHU7D-y446RGWc22m0EFwdzsNAsOTW/view)
+
+### Workflow:
+
+#### Processing Stock Articles
+1. User enter stock article links
+2. Load the web documents: Load the stock articles provided by the user.
+3. Document splitting: Split the loaded documents into chunks.
+4. Embedding: Generate embeddings for the text in each chunk using an embedding model.
+5. FAISS index creation: Create a FAISS index from the embeddings and store it locally.
+
+#### Answering user queries
+1. Query is asked
+2. Load the FAISS vector index.
+3. Configure the retriever object to search for similar documents.
+4. Set up a RAG chain with the retriever and a large language model (LLM).
+5. Use the RAG chain to generate a response to the user's input.
 
 
-## Key concepts
-
-### Document Loader:
-### Text Splitter:
-
-    1. Fixed Size Splitting vs RecursiveCharacterTextSplitter 
-        Fixed Size Splitting: can cut words at mid
-        RecursiveCharacterTextSplitter Splits intelligently, trying paragraphs → sentences → words. Best for LLMs.
-    2. chunk overlap for Maintaining Context
-    Why ?
-    Token Limit: LLMs have a maximum token limit (e.g., GPT-3.5 ~16K tokens, GPT-4 ~128K tokens).
-    Efficient Retrieval: When storing text in a vector database (FAISS, Pinecone, Chroma), splitting helps retrieve relevant chunks efficiently.
-    Better Context for LLMs: If the input text is too large, it gets truncated by the model. Smaller chunks ensure the model receives complete, meaningful content.
-
-    Q & A:
-    Why Split Text?
-    → LLMs have token limits, and smaller chunks improve retrieval & performance.
-    What Does RecursiveCharacterTextSplitter Do?
-    → Splits intelligently (paragraphs → sentences → words).
-    Why chunk_overlap?
-    → Preserves context across chunks, preventing missing info.
 
 
-### Embedding 
-Embeddings are useful when you need to search, compare, or retrieve information from a large set of documents efficiently.
-
-- #### Embedding model: huggingface
-- #### Transformers:
-- #### PyTorch:
+## Key components/concepts used
 
 
-### What is RAG? 
-RAG (Retrieval-Augmented Generation) is an AI framework that combines the strengths of traditional information retrieval systems (such as search and databases) with the capabilities of generative large language models (LLMs).
-RAG extends the already powerful capabilities of LLMs to specific domains or an organization's internal knowledge base, all without the need to retrain the model. It is a cost-effective approach to improving LLM output so it remains relevant, accurate, and useful in various contexts.
+1. ### Document Loader:
+Provides the initial input for further processing, such as splitting and embedding.
+2. ### Text Splitter: 
+Breaks documents into manageable chunks for efficient processing and retrieval.
+
+
+3. ### Embedding 
+Embeddings convert text into numerical vectors for efficient search and retrieval (e.g., using HuggingFace's sentence-transformers). For example, HuggingFace's `all-MiniLM-L6-v2` model turns sentences into embeddings for document similarity search.
+Embedding model: huggingface
+
+4. ### RAG 
+RAG (Retrieval-Augmented Generation) is an AI approach that integrates information retrieval (such as searching a database or document collection) with generative large language models (LLMs). Instead of relying solely on what the LLM "knows" from its pretraining, RAG first retrieves relevant external documents and then passes them, along with the user query, to the LLM. This enables the LLM to generate more up-to-date, accurate, and context-aware responses, especially when dealing with domain-specific or proprietary knowledge.
 
 Retrieval => retrieve the external data (knowledge base)
 Generation => generate more precise, informative, and engaging responses by combining the re knowledge base with LLM
 
-### How RAG Works ? 
-1. Without RAG, the LLM takes the user input and creates a response based on information it was trained on—or what it already knows. 
-2. With RAG, an information retrieval component is introduced that utilizes the user input to first pull information from a new data source. The user query and the relevant information are both given to the LLM. The LLM uses the new knowledge and its training data to create better responses.
-
-
-### what is hallucinations ?
 
 
 ### Alternatives for FAISS vector store
 - Pinecone
 - Chroma
 - Weaviate
+
+![Flow Architecture](templates/images/RAG_arch2.png)
