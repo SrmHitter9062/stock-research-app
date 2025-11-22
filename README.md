@@ -26,7 +26,7 @@ Deactivate
 2. https://groww.in/stocks/tata-motors-ltd/company-financial
 3. https://www.indmoney.com/blog/stocks/tata-motors-q4-results
 
-[play](https://drive.google.com/file/d/1wjTHU7D-y446RGWc22m0EFwdzsNAsOTW/view)
+Output:[play](https://drive.google.com/file/d/1wjTHU7D-y446RGWc22m0EFwdzsNAsOTW/view)
 
 ### Workflow:
 
@@ -50,17 +50,18 @@ Deactivate
 ## Key components/concepts used
 
 
-1. ### Document Loader:
+### 1. Document Loader:
 Provides the initial input for further processing, such as splitting and embedding.
-2. ### Text Splitter: 
+
+### 2. Text Splitter: 
 Breaks documents into manageable chunks for efficient processing and retrieval.
 
 
-3. ### Embedding 
+### 3. Embedding 
 Embeddings convert text into numerical vectors for efficient search and retrieval (e.g., using HuggingFace's sentence-transformers). For example, HuggingFace's `all-MiniLM-L6-v2` model turns sentences into embeddings for document similarity search.
 Embedding model: huggingface
 
-4. ### RAG 
+### 4. RAG 
 RAG (Retrieval-Augmented Generation) is an AI approach that integrates information retrieval (such as searching a database or document collection) with generative large language models (LLMs). Instead of relying solely on what the LLM "knows" from its pretraining, RAG first retrieves relevant external documents and then passes them, along with the user query, to the LLM. This enables the LLM to generate more up-to-date, accurate, and context-aware responses, especially when dealing with domain-specific or proprietary knowledge.
 
 Retrieval => retrieve the external data (knowledge base)
@@ -72,5 +73,7 @@ Generation => generate more precise, informative, and engaging responses by comb
 - Pinecone
 - Chroma
 - Weaviate
+
+### Workflow architecture
 
 ![Flow Architecture](templates/images/RAG_arch2.png)
